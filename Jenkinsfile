@@ -4,9 +4,8 @@ pipeline{
     
     stages {
         
-        
+
         stage('Sonar quality check'){
-            
             steps{
                 agent{
                     docker{
@@ -14,6 +13,7 @@ pipeline{
                     }
 
                 }
+            }
                 steps{
 
                     script{
