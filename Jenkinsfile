@@ -77,7 +77,7 @@ pipeline{
                     withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
                         dir('kubernetes/'){
                             sh """
-                            helmversion=$(helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
+                            helmversion=${helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' '}
                             tar -czvf myapp-${helmversion}.tgz myapp/
                             curl -u admin:$nexus_creds http://34.207.166.180:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v'
                             """
