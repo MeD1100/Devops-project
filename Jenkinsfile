@@ -58,18 +58,18 @@ pipeline{
                 }
             }
         }
-        // stage('Identifying misconfigs using datree in helm charts'){
+        stage('Identifying misconfigs using datree in helm charts'){
 
-        //     steps{ 
-        //         script{
-        //             dir('kubernetes/myapp'){
-        //                 withEnv(['DATREE_TOKEN=d5a46d29-d3e1-4148-a3a9-e0e2bd13c42b']){
-        //                     sh 'helm datree test .' 
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+            steps{ 
+                script{
+                    dir('kubernetes/myapp'){
+                        withEnv(['DATREE_TOKEN=d5a46d29-d3e1-4148-a3a9-e0e2bd13c42b']){
+                            sh 'helm datree test .' 
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Pushing the helm charts to nexus repo'){
             steps{
