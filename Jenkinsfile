@@ -8,24 +8,24 @@ pipeline{
     }
     
     stages {
-        stage('Sonar quality check'){
-                agent{
-                    docker{
-                        image 'maven'
-                        args '-u root'
-                    }
-                }
-                steps{
+        // stage('Sonar quality check'){
+        //         agent{
+        //             docker{
+        //                 image 'maven'
+        //                 args '-u root'
+        //             }
+        //         }
+        //         steps{
 
-                    script{
+        //             script{
                         
-                        withSonarQubeEnv(credentialsId: 'sonar-token') {
+        //                 withSonarQubeEnv(credentialsId: 'sonar-token') {
                             
-                            sh 'mvn clean package sonar:sonar'
-                        }
-                    }
-                }              
-        }
+        //                     sh 'mvn clean package sonar:sonar'
+        //                 }
+        //             }
+        //         }              
+        // }
 
         // stage('Quality Gate status'){
 
@@ -83,6 +83,25 @@ pipeline{
                             '''
                         }
                     }
+                }
+            }
+        }
+
+        stage('Manual Approval'){
+            steps{
+                script{
+                    timeout(10){
+                        mail bcc: '', body:"<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build URL and approve the deployment request <br> URL de build: ${env.BUILD_URL}", cc:'', charset: "UTF-8", from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "mohamedrhimi103@gmail.com";
+                        input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy')
+                    }
+                }
+            }
+        }
+
+        stage('Verifying app deployment'){
+            steps{
+                script{
+                    
                 }
             }
         }
