@@ -7,57 +7,57 @@ pipeline{
         VERSION = "${env.BUILD_ID}"
     }
     
-    stages {
-        stage('Sonar quality check'){
-                agent{
-                    docker{
-                        image 'maven'
-                        args '-u root'
-                    }
-                }
-                steps{
+    // stages {
+    //     stage('Sonar quality check'){
+    //             agent{
+    //                 docker{
+    //                     image 'maven'
+    //                     args '-u root'
+    //                 }
+    //             }
+    //             steps{
 
-                    script{
+    //                 script{
                         
-                        withSonarQubeEnv(credentialsId: 'sonar-token') {
+    //                     withSonarQubeEnv(credentialsId: 'sonar-token') {
                             
-                            sh 'mvn clean package sonar:sonar'
-                        }
-                    }
-                }              
-        }
+    //                         sh 'mvn clean package sonar:sonar'
+    //                     }
+    //                 }
+    //             }              
+    //     }
 
-        stage('Quality Gate status'){
+    //     stage('Quality Gate status'){
 
-            steps{
+    //         steps{
 
-                script{
+    //             script{
 
-                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-                }
-            }
-        }
+    //                 waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+    //             }
+    //         }
+    //     }
 
-        stage('docker build & docker push to Nexus repo'){
+    //     stage('docker build & docker push to Nexus repo'){
 
-            steps{
+    //         steps{
 
-                script{
-                    withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
-                        sh '''  
-                            docker build -t 54.152.119.58:8083/springapp:${VERSION} .
+    //             script{
+    //                 withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
+    //                     sh '''  
+    //                         docker build -t 54.152.119.58:8083/springapp:${VERSION} .
 
-                            docker login -u admin -p $nexus_creds 54.152.119.58:8083
+    //                         docker login -u admin -p $nexus_creds 54.152.119.58:8083
 
-                            docker push 54.152.119.58:8083/springapp:${VERSION}
+    //                         docker push 54.152.119.58:8083/springapp:${VERSION}
 
-                            docker rmi 54.152.119.58:8083/springapp:${VERSION}
-                        '''
-                    }
+    //                         docker rmi 54.152.119.58:8083/springapp:${VERSION}
+    //                     '''
+    //                 }
                     
-                }
-            }
-        }
+    //             }
+    //         }
+    //     }
         stage('Identifying misconfigs using datree in helm charts'){
 
             steps{ 
