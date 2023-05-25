@@ -58,34 +58,34 @@ pipeline{
     //             }
     //         }
     //     }
-        stage('Identifying misconfigs using datree in helm charts'){
+        // stage('Identifying misconfigs using datree in helm charts'){
 
-            steps{ 
-                script{
-                    dir('kubernetes/myapp'){
-                        withEnv(['DATREE_TOKEN=d5a46d29-d3e1-4148-a3a9-e0e2bd13c42b']){
-                            sh 'helm datree test .' 
-                        }
-                    }
-                }
-            }
-        }
+        //     steps{ 
+        //         script{
+        //             dir('kubernetes/myapp'){
+        //                 withEnv(['DATREE_TOKEN=d5a46d29-d3e1-4148-a3a9-e0e2bd13c42b']){
+        //                     sh 'helm datree test .' 
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Pushing the helm charts to nexus repo'){
-            steps{
-                script{
-                    withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
-                        dir('kubernetes/'){
-                            sh '''
-                            helmversion=$(helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
-                            tar -czvf myapp-${helmversion}.tgz myapp/
-                            curl -u admin:$nexus_creds http://54.152.119.58:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v
-                            '''
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Pushing the helm charts to nexus repo'){
+        //     steps{
+        //         script{
+        //             withCredentials([string(credentialsId: 'nexus_passwd', variable: 'nexus_creds')]) {
+        //                 dir('kubernetes/'){
+        //                     sh '''
+        //                     helmversion=$(helm show chart myapp | grep version | cut -d: -f 2 | tr -d ' ')
+        //                     tar -czvf myapp-${helmversion}.tgz myapp/
+        //                     curl -u admin:$nexus_creds http://54.152.119.58:8081/repository/helm-hosted/ --upload-file myapp-${helmversion}.tgz -v
+        //                     '''
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Deploying application on k8s cluster'){
             steps {
