@@ -47,7 +47,7 @@ pipeline{
                         sh '''  
                             docker build -t 54.152.119.58:8083/springapp:${VERSION} .
 
-                            docker login -u admin -p $nexus_creds 54.152.119.58:8083
+                            docker login -u admin -p $nexus_creds --insecure 54.152.119.58:8083
 
                             docker push 54.152.119.58:8083/springapp:${VERSION}
 
