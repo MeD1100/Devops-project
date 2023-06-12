@@ -8,35 +8,35 @@ pipeline{
     }
     
     stages {
-        // stage('Sonar quality check'){
-        //         agent{
-        //             docker{
-        //                 image 'maven'
-        //                 args '-u root'
-        //             }
-        //         }
-        //         steps{
+        stage('Sonar quality check'){
+                agent{
+                    docker{
+                        image 'maven'
+                        args '-u root'
+                    }
+                }
+                steps{
 
-        //             script{
+                    script{
                         
-        //                 withSonarQubeEnv(credentialsId: 'sonar-token') {
+                        withSonarQubeEnv(credentialsId: 'sonar-token') {
                             
-        //                     sh 'mvn clean package sonar:sonar'
-        //                 }
-        //             }
-        //         }              
-        // }
+                            sh 'mvn clean package sonar:sonar'
+                        }
+                    }
+                }              
+        }
 
-        // stage('Quality Gate status'){
+        stage('Quality Gate status'){
 
-        //     steps{
+            steps{
 
-        //         script{
+                script{
 
-        //             waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
-        //         }
-        //     }
-        // }
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonar-token'
+                }
+            }
+        }
 
         stage('docker build & docker push to Nexus repo'){
 
@@ -98,32 +98,32 @@ pipeline{
             }
         }
 
-        // stage('Verifying app deployment'){
-        //     steps{
-        //         script{
-        //             sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl myjavaapp-myapp:8080'
-        //         }
-        //     }
-        // }
+        stage('Verifying app deployment'){
+            steps{
+                script{
+                    sh 'kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl myjavaapp-myapp:8080'
+                }
+            }
+        }
 
-        // stage('Deploying application on k8s cluster'){
-        //     steps { //--kubeconfig=~/.kube/config
-        //         script{
-        //             withCredentials([kubeconfigContent(credentialsId: 'kubernetes-config', variable: 'KUBECONFIG_CONTENT')]) {
-        //                 dir ("kubernetes/"){  
-        //                     sh 'helm list'
-        //                     sh 'helm upgrade --install --set image.repository="54.152.119.58:8083/springapp" --set image.tag="${VERSION}" myjavaapp myapp/ ' 
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Deploying application on k8s cluster'){
+            steps { //--kubeconfig=~/.kube/config
+                script{
+                    withCredentials([kubeconfigContent(credentialsId: 'kubernetes-config', variable: 'KUBECONFIG_CONTENT')]) {
+                        dir ("kubernetes/"){  
+                            sh 'helm list'
+                            sh 'helm upgrade --install --set image.repository="54.152.119.58:8083/springapp" --set image.tag="${VERSION}" myjavaapp myapp/ ' 
+                        }
+                    }
+                }
+            }
+        }
 
 
     }
-    // post{
-    //     always{
-    //         mail bcc: '', body:"<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc:'', charset: "UTF-8", from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "mohamedrhimi103@gmail.com";
-    //     }
-    // }
+    post{
+        always{
+            mail bcc: '', body:"<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc:'', charset: "UTF-8", from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "mohamedrhimi103@gmail.com";
+        }
+    }
 }
